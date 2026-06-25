@@ -2,5 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /scratchpad/
 
-Sitemap: https://stoleshnica-irk.ru/sitemap.xml
-Host: https://stoleshnica-irk.ru
+Sitemap: https://lithos-irk.ru/sitemap.xml
+Host: https://lithos-irk.ru

@@ -107,13 +107,13 @@ $tpl = @'
 __HEAD__
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
-<link rel="canonical" href="https://stoleshnica-irk.ru/uslugi/__SLUG__.html">
+<link rel="canonical" href="https://lithos-irk.ru/uslugi/__SLUG__.html">
 <meta name="geo.region" content="RU-IRK"><meta name="geo.placename" content="Иркутск">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Product","name":"__H1__","description":"__DESC__","brand":{"@type":"Brand","name":"КАМЕНЪ"},"offers":{"@type":"Offer","priceCurrency":"RUB","availability":"https://schema.org/InStock","areaServed":"Иркутск"}}
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://stoleshnica-irk.ru/"},{"@type":"ListItem","position":2,"name":"Изделия","item":"https://stoleshnica-irk.ru/uslugi/"},{"@type":"ListItem","position":3,"name":"__H1__"}]}
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Главная","item":"https://lithos-irk.ru/"},{"@type":"ListItem","position":2,"name":"Изделия","item":"https://lithos-irk.ru/uslugi/"},{"@type":"ListItem","position":3,"name":"__H1__"}]}
 </script>
 </head>
 <body>
@@ -225,7 +225,7 @@ $catalog = @'
 __HEAD__
 <title>Изделия из искусственного камня в Иркутске — каталог | КАМЕНЪ</title>
 <meta name="description" content="Каталог изделий из искусственного камня в Иркутске: столешницы, подоконники, барные стойки, мойки, душевые поддоны, ресепшн, фартуки и другое. На заказ от производителя.">
-<link rel="canonical" href="https://stoleshnica-irk.ru/uslugi/">
+<link rel="canonical" href="https://lithos-irk.ru/uslugi/">
 <meta name="geo.region" content="RU-IRK"><meta name="geo.placename" content="Иркутск">
 </head>
 <body>
@@ -253,14 +253,14 @@ Set-Content (Join-Path $dir 'index.html') -Value $catalog -Encoding UTF8 -NoNewl
 
 # ---- Sitemap ----
 $root = Split-Path -Parent $dir
-$urls = @('https://stoleshnica-irk.ru/','https://stoleshnica-irk.ru/uslugi/',
-  'https://stoleshnica-irk.ru/materialy/kvarcevyj-aglomerat.html',
-  'https://stoleshnica-irk.ru/materialy/akrilovyj-kamen.html',
-  'https://stoleshnica-irk.ru/materialy/litevoj-mramor.html')
-foreach ($it in $data) { $urls += "https://stoleshnica-irk.ru/uslugi/$($it.slug).html" }
+$urls = @('https://lithos-irk.ru/','https://lithos-irk.ru/uslugi/',
+  'https://lithos-irk.ru/materialy/kvarcevyj-aglomerat.html',
+  'https://lithos-irk.ru/materialy/akrilovyj-kamen.html',
+  'https://lithos-irk.ru/materialy/litevoj-mramor.html')
+foreach ($it in $data) { $urls += "https://lithos-irk.ru/uslugi/$($it.slug).html" }
 $sm = "<?xml version=`"1.0`" encoding=`"UTF-8`"?>`n<urlset xmlns=`"http://www.sitemaps.org/schemas/sitemap/0.9`">`n"
 foreach ($u in $urls) {
-  $pr = if ($u -eq 'https://stoleshnica-irk.ru/') { '1.0' } elseif ($u -like '*uslugi/') { '0.9' } else { '0.7' }
+  $pr = if ($u -eq 'https://lithos-irk.ru/') { '1.0' } elseif ($u -like '*uslugi/') { '0.9' } else { '0.7' }
   $sm += "  <url><loc>$u</loc><changefreq>monthly</changefreq><priority>$pr</priority></url>`n"
 }
 $sm += "</urlset>`n"
