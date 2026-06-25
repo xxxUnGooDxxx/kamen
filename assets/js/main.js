@@ -132,7 +132,7 @@
   }
 
   /* ---------- Отправка форм (Web3Forms) ---------- */
-  var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms → andreimg500@gmail.com
+  var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms → andreimg2@mail.ru
   document.querySelectorAll('form[data-lead]').forEach(function (form) {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
