@@ -135,7 +135,7 @@
   }
 
   /* ---------- Отправка форм (Web3Forms) ---------- */
-  var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms → andreimg2@mail.ru
+  var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms access key — доставка заявок на почту владельца
   document.querySelectorAll('form[data-lead]').forEach(function (form) {
     // Согласие на обработку персональных данных (152-ФЗ) — добавляем во все формы
     if (!form.querySelector('input[name="consent"]')) {
