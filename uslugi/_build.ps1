@@ -118,7 +118,7 @@ $footerAndScripts = @'
     </div>
     <div class="footer__bottom" style="border:0">
       <span>© <span id="year">2026</span> КАМЕНЪ — столешницы из искусственного камня в Иркутске</span>
-      <a href="../index.html" style="display:inline">На главную</a>
+      <span><a href="../politika-konfidencialnosti.html" style="display:inline">Политика конфиденциальности</a> · <a href="../index.html" style="display:inline">На главную</a></span>
     </div>
   </div>
 </footer>

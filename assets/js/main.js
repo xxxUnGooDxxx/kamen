@@ -137,6 +137,18 @@
   /* ---------- Отправка форм (Web3Forms) ---------- */
   var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms → andreimg2@mail.ru
   document.querySelectorAll('form[data-lead]').forEach(function (form) {
+    // Согласие на обработку персональных данных (152-ФЗ) — добавляем во все формы
+    if (!form.querySelector('input[name="consent"]')) {
+      var subBtn = form.querySelector('button[type="submit"]');
+      if (subBtn) {
+        var lab = document.createElement('label');
+        lab.className = 'consent';
+        lab.innerHTML = '<input type="checkbox" name="consent" value="yes" required>' +
+          '<span>Я&nbsp;согласен на&nbsp;обработку персональных данных и&nbsp;принимаю ' +
+          '<a href="/politika-konfidencialnosti.html" target="_blank" rel="noopener">политику конфиденциальности</a></span>';
+        subBtn.parentNode.insertBefore(lab, subBtn);
+      }
+    }
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       var msg = form.querySelector('.form-msg');
