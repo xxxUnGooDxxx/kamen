@@ -25,6 +25,7 @@ $catTileImg = @{
   'stoleshnicy-v-vannoy' = '../images/work-vannaya-4.webp'
   'barnye-stoyki'        = '../images/work-ostrov-4.webp'
   'ofisnye-stoly'        = '../images/work-stol-6.webp'
+  'rakovina-pod-stiralnuyu-mashinu' = '../images/work-vannaya-9.webp'
 }
 function GallerySection($slug) {
   if (-not $realWork.ContainsKey($slug)) { return '' }
