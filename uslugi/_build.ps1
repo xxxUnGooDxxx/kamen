@@ -4,6 +4,7 @@ $dir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $data = Get-Content (Join-Path $dir '_data.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $faq  = Get-Content (Join-Path $dir '_faq.json')  -Raw -Encoding UTF8 | ConvertFrom-Json
 $imgs = Get-Content (Join-Path $dir '_images.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+$geo  = Get-Content (Join-Path $dir '_geo.json')  -Raw -Encoding UTF8 | ConvertFrom-Json
 
 function Pexels([string]$id, [int]$w, [int]$h) {
   # Локальные сток-картинки (avif) лежат в ../images. $w/$h оставлены для совместимости вызовов.
@@ -112,6 +113,9 @@ $header = @'
 $footerAndScripts = @'
 <footer class="footer">
   <div class="container">
+    <div class="footer__cities" style="text-align:center;padding:18px 0;opacity:.85;font-size:14px">
+      Производство в Иркутске · доставка и монтаж: <a href="stoleshnicy-angarsk.html">Ангарск</a> · <a href="stoleshnicy-shelehov.html">Шелехов</a> · <a href="stoleshnicy-usolye-sibirskoe.html">Усолье-Сибирское</a>
+    </div>
     <div class="footer__bottom" style="border:0">
       <span>© <span id="year">2026</span> КАМЕНЪ — столешницы из искусственного камня в Иркутске</span>
       <a href="../index.html" style="display:inline">На главную</a>
@@ -328,6 +332,106 @@ $catalog = $catalog.Replace('__HEAD__', $head).Replace('__HEADER__', $header).Re
 # на странице каталога ссылка "Изделия" ведёт на саму себя — заменим на главную якорь
 Set-Content (Join-Path $dir 'index.html') -Value $catalog -Encoding UTF8 -NoNewline
 
+# ---- Гео-страницы городов области (производство в Иркутске, доставка в город) ----
+$geoTpl = @'
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+__HEAD__
+<title>__TITLE__</title>
+<meta name="description" content="__DESC__">
+<link rel="canonical" href="https://lithos-irk.ru/uslugi/__SLUG__.html">
+<meta name="geo.region" content="RU-IRK"><meta name="geo.placename" content="__CITY__">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="КАМЕНЪ — изделия из искусственного камня, Иркутск">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="__TITLE__">
+<meta property="og:description" content="__DESC__">
+<meta property="og:url" content="https://lithos-irk.ru/uslugi/__SLUG__.html">
+<meta property="og:image" content="https://lithos-irk.ru/images/og/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"КАМЕНЪ — столешницы из искусственного камня","url":"https://lithos-irk.ru/uslugi/__SLUG__.html","areaServed":"__CITY__","priceRange":"от 14 000 ₽/пог.м","address":{"@type":"PostalAddress","addressLocality":"Иркутск","addressRegion":"Иркутская область","addressCountry":"RU"}}
+</script>
+</head>
+<body>
+__HEADER__
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="../images/work-kuhnya-1.webp" alt="Столешницы из искусственного камня __INCITY__" loading="lazy"></div>
+  <div class="container">
+    <div class="crumbs"><a href="../index.html">Главная</a> / Города / __CITY__</div>
+    <h1>Столешницы из искусственного камня __INCITY__</h1>
+    <p>Изготавливаем на собственном производстве в Иркутске, доставляем и устанавливаем __INCITY__ — это __DIST__ от нас.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container article-grid">
+    <div class="prose">
+      <p class="lead">Делаем столешницы и изделия из искусственного камня — акрил, кварцевый агломерат, литьевой мрамор — и работаем с заказчиками из __CITYA__. Те же изделия, цены и гарантия, что и в Иркутске.</p>
+      <p><b>Честно о производстве:</b> наш цех находится в Иркутске, отдельной мастерской __INCITY__ у нас нет. Но __CITY__ — __DIST__ от Иркутска и входит в зону нашей работы, поэтому для вас доступны бесплатный замер с выездом, доставка готового изделия и монтаж под ключ.</p>
+      <h2>Что изготавливаем для жителей __CITYA__</h2>
+      <ul>
+        <li><a href="stoleshnicy-kuhonnye.html">Кухонные столешницы из камня</a></li>
+        <li><a href="stoleshnicy-v-vannoy.html">Столешницы в ванную и под раковину</a></li>
+        <li><a href="mojki-rakoviny.html">Раковины и мойки из камня</a></li>
+        <li><a href="podokonniki.html">Подоконники из камня</a></li>
+        <li><a href="barnye-stoyki.html">Барные стойки</a></li>
+        <li><a href="index.html">— весь каталог изделий из камня</a></li>
+      </ul>
+      <h2>Как заказать из __CITYA__</h2>
+      <p>Оставьте заявку → бесплатный замерщик приедет __INCITY__ с образцами камня → изготовим изделие в Иркутске за 5–10 дней → привезём и установим __INCITY__. Стоимость доставки уточним при заявке.</p>
+      <p><a href="../index.html">← На главную</a></p>
+    </div>
+    <aside class="aside-cta">
+      <h3>Рассчитать столешницу</h3>
+      <p>Пришлём расчёт и образцы. Перезвоним за 15 минут.</p>
+      <form data-lead>
+        <input type="hidden" name="access_key" value="">
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="product" value="Столешница из камня — __CITY__">
+        <div class="field"><input type="text" name="name" placeholder="Имя" required></div>
+        <div class="field"><input type="tel" name="phone" placeholder="Телефон" required></div>
+        <button type="submit" class="btn btn--gold btn--block btn--lg">Получить расчёт</button>
+        <div class="form-msg"></div>
+      </form>
+    </aside>
+  </div>
+</section>
+
+__FAQSECTION__
+__FOOTER__
+'@
+
+$geoCount = 0
+foreach ($g in $geo) {
+  $title = "Столешницы из искусственного камня $($g.inCity) — доставка из Иркутска"
+  $desc  = "Столешницы и изделия из искусственного камня $($g.inCity): кухни, ванные, мойки, подоконники. Производство в Иркутске, доставка и монтаж $($g.inCity). Бесплатный замер, гарантия 3 года."
+  $faqPairs = @(
+    @("Вы делаете столешницы именно $($g.inCity)?", "Производство находится в Иркутске — там мы изготавливаем изделие. $($g.city) в зоне нашей работы ($($g.dist)): привозим образцы на замер, доставляем готовую столешницу и устанавливаем. Своей мастерской $($g.inCity) у нас нет."),
+    @("Замер $($g.inCity) бесплатный?", "Да, замерщик приедет $($g.inCity) с образцами камня бесплатно, снимет точные размеры и поможет с выбором цвета."),
+    @("Сколько стоит доставка $($g.inCity)?", "Стоимость доставки $($g.inCity) уточним при заявке — она зависит от размера изделия и часто входит в стоимость заказа."),
+    @("За сколько изготовите столешницу?", "Обычно 5–10 рабочих дней после замера. Точный срок и цену фиксируем в договоре.")
+  )
+  $rows = ''; $ld = @()
+  foreach ($pair in $faqPairs) {
+    $q = $pair[0]; $a = $pair[1]
+    $rows += "      <div class=`"faq__item`"><button class=`"faq__q`">$q</button><div class=`"faq__a`"><p>$a</p></div></div>`n"
+    $ld  += '{"@type":"Question","name":"' + $q + '","acceptedAnswer":{"@type":"Answer","text":"' + $a + '"}}'
+  }
+  $faqSection = "<section class=`"section section--tight`" id=`"faq`">`n  <div class=`"container`">`n    <div class=`"section-head section-head--center`" data-reveal>`n      <span class=`"eyebrow eyebrow--center`">Доставка $($g.inCity)</span>`n      <h2>Частые <em>вопросы</em></h2>`n    </div>`n    <div class=`"faq`" data-reveal>`n$rows    </div>`n  </div>`n</section>`n`n"
+  $faqSection += '<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[' + ($ld -join ',') + ']}</script>'
+
+  $html = $geoTpl.Replace('__HEAD__', $head).Replace('__HEADER__', $header).Replace('__FOOTER__', $footerAndScripts)
+  $html = $html.Replace('__TITLE__', $title).Replace('__DESC__', $desc).Replace('__SLUG__', $g.slug)
+  $html = $html.Replace('__INCITY__', $g.inCity).Replace('__CITYA__', $g.cityA).Replace('__DIST__', $g.dist).Replace('__CITY__', $g.city)
+  $html = $html.Replace('__FAQSECTION__', $faqSection)
+  Set-Content (Join-Path $dir ($g.slug + '.html')) -Value $html -Encoding UTF8 -NoNewline
+  $geoCount++
+}
+
 # ---- Sitemap ----
 $root = Split-Path -Parent $dir
 $urls = @('https://lithos-irk.ru/','https://lithos-irk.ru/uslugi/',
@@ -335,6 +439,7 @@ $urls = @('https://lithos-irk.ru/','https://lithos-irk.ru/uslugi/',
   'https://lithos-irk.ru/materialy/akrilovyj-kamen.html',
   'https://lithos-irk.ru/materialy/litevoj-mramor.html')
 foreach ($it in $data) { $urls += "https://lithos-irk.ru/uslugi/$($it.slug).html" }
+foreach ($g in $geo)   { $urls += "https://lithos-irk.ru/uslugi/$($g.slug).html" }
 $sm = "<?xml version=`"1.0`" encoding=`"UTF-8`"?>`n<urlset xmlns=`"http://www.sitemaps.org/schemas/sitemap/0.9`">`n"
 foreach ($u in $urls) {
   $pr = if ($u -eq 'https://lithos-irk.ru/') { '1.0' } elseif ($u -like '*uslugi/') { '0.9' } else { '0.7' }
@@ -343,4 +448,4 @@ foreach ($u in $urls) {
 $sm += "</urlset>`n"
 Set-Content (Join-Path $root 'sitemap.xml') -Value $sm -Encoding UTF8 -NoNewline
 
-"Сгенерировано страниц изделий: $count + каталог + sitemap ($($urls.Count) URL)"
+"Сгенерировано страниц изделий: $count + гео-страниц: $geoCount + каталог + sitemap ($($urls.Count) URL)"
