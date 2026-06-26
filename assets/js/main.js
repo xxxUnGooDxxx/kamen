@@ -5,6 +5,9 @@
 (function () {
   'use strict';
 
+  // ID счётчика Яндекс.Метрики — нужен, чтобы при отправке форм засчитывались цели
+  window.YM_ID = window.YM_ID || 110157989;
+
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var hasGSAP = window.gsap && window.ScrollTrigger;
@@ -152,7 +155,15 @@
           form.reset();
           if (calc && form === calc) calc.querySelector('.price-out').textContent = 'от — ₽';
           if (form.closest('.modal')) setTimeout(closeModal, 2500);
-          if (window.ym && window.YM_ID) window.ym(window.YM_ID, 'reachGoal', 'lead');
+          if (window.ym && window.YM_ID) {
+            // отдельная цель по типу формы — видно, откуда пришла заявка
+            var goal = form.id === 'calc-form'        ? 'lead_calc'      // калькулятор
+                     : form.closest('.modal')          ? 'lead_modal'     // всплывающая форма
+                     : form.closest('.aside-cta')       ? 'lead_product'   // форма на странице изделия
+                     :                                    'lead_form';     // прочие формы
+            window.ym(window.YM_ID, 'reachGoal', 'lead'); // общая цель — все заявки вместе
+            window.ym(window.YM_ID, 'reachGoal', goal);
+          }
           if (window.gtag) window.gtag('event', 'generate_lead');
         } else { throw new Error(json.message || 'error'); }
       } catch (err) {
