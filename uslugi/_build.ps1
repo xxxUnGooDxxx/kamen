@@ -6,8 +6,35 @@ $faq  = Get-Content (Join-Path $dir '_faq.json')  -Raw -Encoding UTF8 | ConvertF
 $imgs = Get-Content (Join-Path $dir '_images.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 
 function Pexels([string]$id, [int]$w, [int]$h) {
+  # Локальные сток-картинки (avif) лежат в ../images. $w/$h оставлены для совместимости вызовов.
   if (-not $id) { return $null }
-  return "https://images.pexels.com/photos/$id/pexels-photo-$id.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=$w&h=$h"
+  if ($id -eq '28288788') { $id = '4705932' }  # фото 28288788 удалено с pexels (404) — заглушка-текстура
+  return "../images/pexels-photo-$id.avif"
+}
+
+# Реальные фото работ по тематике: slug -> (префикс файлов, кол-во, заголовок галереи, alt)
+$realWork = @{
+  'stoleshnicy-kuhonnye' = @{ pre='kuhnya';  n=15; h='Кухонные столешницы<br>в&nbsp;<em>интерьерах</em> Иркутска';   alt='Кухонная столешница из искусственного камня, Иркутск' }
+  'stoleshnicy-v-vannoy' = @{ pre='vannaya'; n=13; h='Столешницы в&nbsp;ванную<br><em>из камня</em> · Иркутск';      alt='Столешница в ванную из искусственного камня, Иркутск' }
+  'ofisnye-stoly'        = @{ pre='stol';    n=16; h='Столы и&nbsp;столешницы<br><em>из камня</em> · Иркутск';        alt='Стол из искусственного камня, Иркутск' }
+  'barnye-stoyki'        = @{ pre='ostrov';  n=11; h='Барные стойки и&nbsp;<em>острова</em><br>из камня · Иркутск';  alt='Барная стойка и остров из искусственного камня, Иркутск' }
+}
+# Картинка плитки в каталоге для тематических товаров (реальное фото вместо стока)
+$catTileImg = @{
+  'stoleshnicy-kuhonnye' = '../images/work-kuhnya-3.webp'
+  'stoleshnicy-v-vannoy' = '../images/work-vannaya-4.webp'
+  'barnye-stoyki'        = '../images/work-ostrov-4.webp'
+  'ofisnye-stoly'        = '../images/work-stol-6.webp'
+}
+function GallerySection($slug) {
+  if (-not $realWork.ContainsKey($slug)) { return '' }
+  $g = $realWork[$slug]
+  $tiles = ''
+  for ($i = 1; $i -le $g.n; $i++) {
+    $img = "../images/work-$($g.pre)-$i.webp"
+    $tiles += "        <a class=`"g-tile glightbox`" data-gallery=`"$($g.pre)`" data-type=`"image`" href=`"$img`"><img src=`"$img`" alt=`"$($g.alt) — работа $i`" loading=`"lazy`"></a>`n"
+  }
+  return "<section class=`"section section--tight gallery`">`n  <div class=`"container`">`n    <div class=`"section-head section-head--center`" data-reveal>`n      <span class=`"eyebrow eyebrow--center`">Наши работы</span>`n      <h2>$($g.h)</h2>`n    </div>`n  </div>`n  <div class=`"container`">`n    <div class=`"gallery-grid`" data-reveal>`n$tiles    </div>`n  </div>`n</section>`n`n"
 }
 function PropVal($obj, $name) {
   $p = $obj.PSObject.Properties[$name]; if ($p) { return $p.Value } else { return $null }
@@ -24,7 +51,7 @@ $favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox
 $head = @'
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<script>(function(){try{var t=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -39,13 +66,26 @@ window.imgFB = function (img) {
 </script>
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="icon" href="__FAV__">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110157989', 'ym');
+
+    ym(110157989, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/110157989" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 '@
 $head = $head.Replace('__FAV__', $favicon)
 
 $header = @'
 <header class="header">
   <div class="container header__inner">
-    <a href="../index.html" class="logo"><span class="logo__mark">К</span><span>КАМЕНЪ<small>Иркутск</small></span></a>
+    <a href="../index.html" class="logo"><span class="logo__mark">К</span><span>КАМЕНЪ</span></a>
     <nav class="nav">
       <a href="../index.html#materials">Материалы</a>
       <a href="index.html">Изделия</a>
@@ -156,6 +196,7 @@ __BULLETS__
   </div>
 </section>
 
+__GALLERY__
 __FAQSECTION__
 __FOOTER__
 '@
@@ -199,6 +240,7 @@ foreach ($it in $data) {
   $html = $html.Replace('__BULLETS__', $bullets)
   $html = $html.Replace('__BEST__',   $it.best)
   $html = $html.Replace('__HEROSRC__', $herosrc)
+  $html = $html.Replace('__GALLERY__', (GallerySection $it.slug))
   $html = $html.Replace('__FAQSECTION__', $faqSection)
   Set-Content (Join-Path $dir ($it.slug + '.html')) -Value $html -Encoding UTF8 -NoNewline
   $count++
@@ -211,9 +253,14 @@ foreach ($key in $cats.Keys) {
   if (-not $items) { continue }
   $catCards += "    <div class=`"section-head section-head--center`" data-reveal>`n      <span class=`"eyebrow eyebrow--center`">$($cats[$key])</span>`n    </div>`n    <div class=`"gallery-grid`" data-reveal style=`"margin-bottom:60px`">`n"
   foreach ($it in $items) {
-    $cid = PropVal $imgs $it.slug
-    $csrc = if ($cid) { Pexels $cid 800 600 } else { "https://loremflickr.com/800/600/$($it.kw)" }
-    $catCards += "      <a class=`"g-tile`" href=`"$($it.slug).html`"><img src=`"$csrc`" alt=`"$($it.h1)`" onerror=`"imgFB(this)`" data-kw=`"$($it.kw)`" data-w=`"800`" data-h=`"600`"><span class=`"g-tile__cap`"><b>$($it.h1)</b></span></a>`n"
+    if ($catTileImg.ContainsKey($it.slug)) {
+      # реальное фото работы — без onerror-фолбэка
+      $catCards += "      <a class=`"g-tile`" href=`"$($it.slug).html`"><img src=`"$($catTileImg[$it.slug])`" alt=`"$($it.h1)`" loading=`"lazy`"><span class=`"g-tile__cap`"><b>$($it.h1)</b></span></a>`n"
+    } else {
+      $cid = PropVal $imgs $it.slug
+      $csrc = if ($cid) { Pexels $cid 800 600 } else { "https://loremflickr.com/800/600/$($it.kw)" }
+      $catCards += "      <a class=`"g-tile`" href=`"$($it.slug).html`"><img src=`"$csrc`" alt=`"$($it.h1)`" onerror=`"imgFB(this)`" data-kw=`"$($it.kw)`" data-w=`"800`" data-h=`"600`"><span class=`"g-tile__cap`"><b>$($it.h1)</b></span></a>`n"
+    }
   }
   $catCards += "    </div>`n"
 }
@@ -231,7 +278,7 @@ __HEAD__
 <body>
 __HEADER__
 <section class="page-hero">
-  <div class="page-hero__bg"><img src="https://images.pexels.com/photos/10099318/pexels-photo-10099318.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600&h=900" alt="Изделия из искусственного камня" onerror="imgFB(this)" data-kw="kitchen,marble,interior" data-w="1600" data-h="900"></div>
+  <div class="page-hero__bg"><img src="../images/pexels-photo-10099318.avif" alt="Изделия из искусственного камня" onerror="imgFB(this)" data-kw="kitchen,marble,interior" data-w="1600" data-h="900"></div>
   <div class="container">
     <div class="crumbs"><a href="../index.html">Главная</a> / Изделия</div>
     <h1>Изделия из искусственного камня</h1>
