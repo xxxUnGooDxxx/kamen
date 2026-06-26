@@ -149,6 +149,17 @@ __HEAD__
 <meta name="description" content="__DESC__">
 <link rel="canonical" href="https://lithos-irk.ru/uslugi/__SLUG__.html">
 <meta name="geo.region" content="RU-IRK"><meta name="geo.placename" content="Иркутск">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="КАМЕНЪ — изделия из искусственного камня, Иркутск">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="__TITLE__">
+<meta property="og:description" content="__DESC__">
+<meta property="og:url" content="https://lithos-irk.ru/uslugi/__SLUG__.html">
+<meta property="og:image" content="https://lithos-irk.ru/images/og/og-__SLUG__.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="__H1__">
+<meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Product","name":"__H1__","description":"__DESC__","brand":{"@type":"Brand","name":"КАМЕНЪ"},"offers":{"@type":"Offer","priceCurrency":"RUB","availability":"https://schema.org/InStock","areaServed":"Иркутск"}}
 </script>
@@ -274,6 +285,17 @@ __HEAD__
 <meta name="description" content="Каталог изделий из искусственного камня в Иркутске: столешницы, подоконники, барные стойки, мойки, душевые поддоны, ресепшн, фартуки и другое. На заказ от производителя.">
 <link rel="canonical" href="https://lithos-irk.ru/uslugi/">
 <meta name="geo.region" content="RU-IRK"><meta name="geo.placename" content="Иркутск">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="КАМЕНЪ — изделия из искусственного камня, Иркутск">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Изделия из искусственного камня в Иркутске — каталог | КАМЕНЪ">
+<meta property="og:description" content="Каталог изделий из искусственного камня в Иркутске: столешницы, подоконники, барные стойки, мойки, душевые поддоны, ресепшн, фартуки и другое. На заказ от производителя.">
+<meta property="og:url" content="https://lithos-irk.ru/uslugi/">
+<meta property="og:image" content="https://lithos-irk.ru/images/og/og-uslugi.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Изделия из искусственного камня в Иркутске">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 __HEADER__
