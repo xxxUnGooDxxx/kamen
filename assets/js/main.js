@@ -158,6 +158,19 @@
       data.set('subject', 'Новая заявка с сайта столешниц (Иркутск)');
       data.set('from_name', 'Сайт столешниц — Иркутск');
       if (data.get('botcheck')) return;
+      // Дублируем заявку в Telegram через вебхук Make (фоново, не мешает основной отправке)
+      try {
+        fetch('https://hook.eu1.make.com/flysic3p78p5nh2f1pwr334s9fgqvjcd', {
+          method: 'POST',
+          body: new URLSearchParams({
+            name: data.get('name') || '',
+            phone: data.get('phone') || '',
+            product: data.get('product') || '',
+            comment: data.get('comment') || '',
+            page: location.href
+          })
+        });
+      } catch (e) {}
       if (btn) { btn.disabled = true; btn.dataset.txt = btn.innerHTML; btn.innerHTML = '<span>Отправляем…</span>'; }
       try {
         var res = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { Accept: 'application/json' }, body: data });
