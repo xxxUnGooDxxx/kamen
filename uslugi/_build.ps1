@@ -428,6 +428,8 @@ foreach ($g in $geo) {
   $html = $html.Replace('__TITLE__', $title).Replace('__DESC__', $desc).Replace('__SLUG__', $g.slug)
   $html = $html.Replace('__INCITY__', $g.inCity).Replace('__CITYA__', $g.cityA).Replace('__DIST__', $g.dist).Replace('__CITY__', $g.city)
   $html = $html.Replace('__FAQSECTION__', $faqSection)
+  # на гео-страницах не обещаем бесплатный замер (производство в Иркутске) — правим и общую модалку
+  $html = $html.Replace('запишем на бесплатный замер', 'запишем на замер')
   Set-Content (Join-Path $dir ($g.slug + '.html')) -Value $html -Encoding UTF8 -NoNewline
   $geoCount++
 }
