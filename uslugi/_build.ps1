@@ -18,6 +18,7 @@ $realWork = @{
   'stoleshnicy-v-vannoy' = @{ pre='vannaya'; n=13; h='Столешницы в&nbsp;ванную<br><em>из камня</em> · Иркутск';      alt='Столешница в ванную из искусственного камня, Иркутск' }
   'ofisnye-stoly'        = @{ pre='stol';    n=16; h='Столы и&nbsp;столешницы<br><em>из камня</em> · Иркутск';        alt='Стол из искусственного камня, Иркутск' }
   'barnye-stoyki'        = @{ pre='ostrov';  n=11; h='Барные стойки и&nbsp;<em>острова</em><br>из камня · Иркутск';  alt='Барная стойка и остров из искусственного камня, Иркутск' }
+  'rakovina-pod-stiralnuyu-mashinu' = @{ pre='vannaya'; nums=@(4,7,10,11,13); h='Раковина над&nbsp;стиральной машиной<br><em>из камня</em> · Иркутск'; alt='Раковина со столешницей над стиральной машиной из камня, Иркутск' }
 }
 # Картинка плитки в каталоге для тематических товаров (реальное фото вместо стока)
 $catTileImg = @{
@@ -25,15 +26,21 @@ $catTileImg = @{
   'stoleshnicy-v-vannoy' = '../images/work-vannaya-4.webp'
   'barnye-stoyki'        = '../images/work-ostrov-4.webp'
   'ofisnye-stoly'        = '../images/work-stol-6.webp'
-  'rakovina-pod-stiralnuyu-mashinu' = '../images/work-vannaya-9.webp'
+  'rakovina-pod-stiralnuyu-mashinu' = '../images/work-vannaya-7.webp'
+}
+# Hero-картинка (реальное фото вместо стока) для отдельных страниц
+$heroImg = @{
+  'rakovina-pod-stiralnuyu-mashinu' = '../images/work-vannaya-7.webp'
 }
 function GallerySection($slug) {
   if (-not $realWork.ContainsKey($slug)) { return '' }
   $g = $realWork[$slug]
-  $tiles = ''
-  for ($i = 1; $i -le $g.n; $i++) {
+  $list = if ($g.ContainsKey('nums')) { $g.nums } else { 1..$g.n }
+  $tiles = ''; $k = 0
+  foreach ($i in $list) {
+    $k++
     $img = "../images/work-$($g.pre)-$i.webp"
-    $tiles += "        <a class=`"g-tile glightbox`" data-gallery=`"$($g.pre)`" data-type=`"image`" href=`"$img`"><img src=`"$img`" alt=`"$($g.alt) — работа $i`" loading=`"lazy`"></a>`n"
+    $tiles += "        <a class=`"g-tile glightbox`" data-gallery=`"$($g.pre)-$slug`" data-type=`"image`" href=`"$img`"><img src=`"$img`" alt=`"$($g.alt) — работа $k`" loading=`"lazy`"></a>`n"
   }
   return "<section class=`"section section--tight gallery`">`n  <div class=`"container`">`n    <div class=`"section-head section-head--center`" data-reveal>`n      <span class=`"eyebrow eyebrow--center`">Наши работы</span>`n      <h2>$($g.h)</h2>`n    </div>`n  </div>`n  <div class=`"container`">`n    <div class=`"gallery-grid`" data-reveal>`n$tiles    </div>`n  </div>`n</section>`n`n"
 }
@@ -219,7 +226,7 @@ foreach ($it in $data) {
 
   # фото Pexels (с фолбэком на loremflickr через imgFB)
   $heroId  = PropVal $imgs $it.slug
-  $herosrc = if ($heroId) { Pexels $heroId 1600 900 } else { "https://loremflickr.com/1600/900/$($it.kw)" }
+  $herosrc = if ($heroImg.ContainsKey($it.slug)) { $heroImg[$it.slug] } elseif ($heroId) { Pexels $heroId 1600 900 } else { "https://loremflickr.com/1600/900/$($it.kw)" }
 
   # мини-FAQ
   $faqItems = PropVal $faq $it.slug
