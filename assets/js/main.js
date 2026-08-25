@@ -466,6 +466,38 @@
 
   /* ---------- Отправка форм (Web3Forms) ---------- */
   var WEB3FORMS_KEY = '29946204-51c2-465b-acde-07738ed68806'; // Web3Forms access key — доставка заявок на почту владельца
+  var LEAD_LIMIT = 2;
+  var LEAD_LIMIT_PERIOD = 24 * 60 * 60 * 1000;
+  var LEAD_STORAGE_KEY = 'kamen_leads_by_phone';
+
+  // Храним число отправок по нормализованному номеру в браузере посетителя.
+  // Это защищает от повторных кликов и повторной отправки с других форм сайта.
+  var normalizePhone = function (phone) {
+    var digits = String(phone || '').replace(/\D/g, '');
+    if (digits.length === 11 && (digits.charAt(0) === '7' || digits.charAt(0) === '8')) digits = digits.slice(1);
+    return digits;
+  };
+  var getLeadCounts = function () {
+    try { return JSON.parse(localStorage.getItem(LEAD_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  };
+  var getLeadCount = function (phone) {
+    var counts = getLeadCounts();
+    var sentAt = counts[normalizePhone(phone)];
+    if (!Array.isArray(sentAt)) return 0;
+    return sentAt.filter(function (timestamp) { return Date.now() - timestamp < LEAD_LIMIT_PERIOD; }).length;
+  };
+  var rememberLead = function (phone) {
+    var key = normalizePhone(phone);
+    if (!key) return;
+    try {
+      var counts = getLeadCounts();
+      var sentAt = Array.isArray(counts[key]) ? counts[key] : [];
+      counts[key] = sentAt.filter(function (timestamp) { return Date.now() - timestamp < LEAD_LIMIT_PERIOD; });
+      counts[key].push(Date.now());
+      localStorage.setItem(LEAD_STORAGE_KEY, JSON.stringify(counts));
+    } catch (e) {}
+  };
   document.querySelectorAll('form[data-lead]').forEach(function (form) {
     // Согласие на обработку персональных данных (152-ФЗ) — добавляем во все формы
     if (!form.querySelector('input[name="consent"]')) {
@@ -484,6 +516,11 @@
       var msg = form.querySelector('.form-msg');
       var btn = form.querySelector('button[type="submit"]');
       var data = new FormData(form);
+      var phone = data.get('phone') || '';
+      if (getLeadCount(phone) >= LEAD_LIMIT) {
+        if (msg) { msg.className = 'form-msg ok'; msg.textContent = 'Ваша заявка уже принята. Мы обязательно свяжемся с вами.'; }
+        return;
+      }
       if (!data.get('access_key')) data.set('access_key', WEB3FORMS_KEY);
       data.set('subject', 'Новая заявка с сайта столешниц (Иркутск)');
       data.set('from_name', 'Сайт столешниц — Иркутск');
@@ -507,6 +544,7 @@
         var res = await fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { Accept: 'application/json' }, body: data });
         var json = await res.json();
         if (json.success) {
+          rememberLead(phone);
           if (msg) { msg.className = 'form-msg ok'; msg.textContent = 'Спасибо! Заявка отправлена — перезвоним в течение 15 минут.'; }
           form.reset();
           if (calc && form === calc) calc.querySelector('.price-out').textContent = 'от — ₽';
